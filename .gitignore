@@ -1,0 +1,23 @@
+# Keil build files and output
+*.o
+*.d
+*.crf
+*.lnp
+*.axf
+*.htm
+*.sct
+*.map
+*.lst
+*.dep
+*.uvguix.*
+*.uvoptx
+*.build_log.htm
+Objects/
+Listings/
+DebugConfig/
+Event*.scvd
+
+# VS Code
+.vscode/
+*.code-workspace
+.history/

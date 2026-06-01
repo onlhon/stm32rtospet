@@ -74,88 +74,88 @@ void Process_Command(uint16_t data)
 	{
 		case 0x29: //放松的趴下
 			Face_Mode=0;
-			Face_Config();
+			
 			Action_Mode=0;
 			break;
 		case 0x30: //蹲下
 			Face_Mode=1;
-			Face_Config();
+			
 			Action_Mode=1;
 			break;
 		case 0x31: //直立
 			Face_Mode=5;
-			Face_Config();
+			
 			Action_Mode=2;
 			break;
 		case 0x32: //趴下
 			Face_Mode=1;
-			Face_Config();
+			
 			Action_Mode=3;
 			break;
 		case 0x33: //前进
 			Face_Mode=2;
-			Face_Config();
+			
 			Action_Mode=4;
 			break;
 		case 0x34: //后退
 			Face_Mode=2;
-			Face_Config();
+			
 			Action_Mode=5;
 			break;
 		case 0x35: //左转
 			Face_Mode=2;
-			Face_Config();
+			
 			Action_Mode=6;
 			break;
 		case 0x36: //右转
 			Face_Mode=2;
-			Face_Config();
+			
 			Action_Mode=7;
 			break;
 		case 0x37: //摇摆
 			Face_Mode=4;
-			Face_Config();
+			
 			Action_Mode=8;
 			break;
 		case 0x38: //减少移动延迟，增加移动速度
-			if(SpeedDelay==120) { Face_Mode=3; Face_Config(); }
+			if(SpeedDelay==120) { Face_Mode=3;  }
 			if(SpeedDelay>100) {
 				SpeedDelay-=20;	
 			} else {
 				Face_Mode=2;
-				Face_Config();
+				
 				SpeedDelay=200;
 			}
 			break;
 		case 0x39: //减少摇摆延迟，增加摇摆速度
-			if(SwingDelay==4) { Face_Mode=3; Face_Config(); }
+			if(SwingDelay==4) { Face_Mode=3;  }
 			if(SwingDelay>3) {
 				SwingDelay--;	
 			} else {	
 				Face_Mode=4;
-				Face_Config();
+				
 				SwingDelay=9;
 			}
 			break;
 		case 0x40: //摇尾巴
 			WeiBa = (WeiBa == 0) ? 1 : 0;
 			Face_Mode=1;
-			Face_Config();
+			
 			Action_Mode=9;
 			break;
 		case 0x41: //向前跳
 			Face_Mode=2;
-			Face_Config();
+			
 			Action_Mode=10;
 			break;
 		case 0x42: //向后跳
 			Face_Mode=2;
-			Face_Config();
+			
 			Action_Mode=11;
 			break;
 		case 0x43: //打招呼
 			Face_Mode=6;
-			Face_Config();
+			
 			Action_Mode=13;
 			break;
 	}
@@ -163,20 +163,28 @@ void Process_Command(uint16_t data)
 
 void USART1_IRQHandler(void)
 {
-	if(USART_GetITStatus(USART1,USART_IT_RXNE)==SET)//如果接受到
+	if(USART_GetITStatus(USART1,USART_IT_RXNE) != RESET)//如果接受到
 	{
 		uint16_t data = USART_ReceiveData(USART1);
 		Process_Command(data);
-		USART_ClearITPendingBit(USART1,USART_IT_RXNE);
+	}
+	// 清除溢出错误(ORE)，防止程序卡死在中断
+	if(USART_GetFlagStatus(USART1,USART_FLAG_ORE) != RESET)
+	{
+		USART_ReceiveData(USART1);
 	}
 }
 
 void USART3_IRQHandler(void)
 {
-	if(USART_GetITStatus(USART3,USART_IT_RXNE)==SET)//如果接受到
+	if(USART_GetITStatus(USART3,USART_IT_RXNE) != RESET)//如果接受到
 	{
 		uint16_t data = USART_ReceiveData(USART3);
 		Process_Command(data);
-		USART_ClearITPendingBit(USART3,USART_IT_RXNE);
+	}
+	// 清除溢出错误(ORE)
+	if(USART_GetFlagStatus(USART3,USART_FLAG_ORE) != RESET)
+	{
+		USART_ReceiveData(USART3);
 	}
 }

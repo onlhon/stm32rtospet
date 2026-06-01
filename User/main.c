@@ -62,6 +62,7 @@ void StartTask(void *pvParameters)
 	Control_Init();//蓝牙初始化
 	OLED_ShowImage(0,0,128,64,Face_sleep);
 	OLED_Update();
+	LedInit();
 	GPIO_WriteBit(GPIOA, GPIO_Pin_1, Bit_RESET);
 	//创建任务
 	xTaskCreate(ActionTask, "ActionTask", 128, NULL, 2, &ActionTaskHandle);
